@@ -34,24 +34,45 @@ import { resume } from '../data/resume';
 
         <div class="download-area fade-up">
           <p>需要完整版 PDF 履歷？</p>
-          <a href="/resume.pdf" download class="btn-download">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7,10 12,15 17,10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            下載 PDF 履歷
-          </a>
+          <div class="download-btns">
+            <a href="/resume-zh.pdf" download="resume-zh.pdf" class="btn-download">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              下載中文履歷
+            </a>
+            <a href="/resume-en.pdf" download="resume-en.pdf" class="btn-download btn-download--outline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              下載英文履歷
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- RIGHT: Skills -->
+      <!-- RIGHT: Skills + Certifications -->
       <div class="resume-aside">
         <h2 class="resume-section-title fade-up">技能</h2>
         {resume.skillGroups.map((group, i) => (
           <div class="skill-group fade-up" style={`transition-delay:${i * 0.1}s`}>
             <div class="skill-group-label">{group.label}</div>
             <div class="skill-chips">
+              {group.primary.map((s) => <SkillChip label={s} variant="primary" />)}
+              {group.secondary.map((s) => <SkillChip label={s} variant="secondary" />)}
+            </div>
+          </div>
+        ))}
+
+        <h2 class="resume-section-title fade-up">證照</h2>
+        {resume.certifications.map((group, i) => (
+          <div class="skill-group fade-up" style={`transition-delay:${i * 0.1}s`}>
+            <div class="skill-group-label">{group.label}</div>
+            <div class="skill-chips" style={group.column ? 'flex-direction:column;align-items:flex-start' : ''}>
               {group.primary.map((s) => <SkillChip label={s} variant="primary" />)}
               {group.secondary.map((s) => <SkillChip label={s} variant="secondary" />)}
             </div>
@@ -132,6 +153,13 @@ import { resume } from '../data/resume';
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   }
   .btn-download:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .download-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn-download--outline {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.7);
+  }
+  .btn-download--outline:hover { background: rgba(255,255,255,0.1); box-shadow: var(--shadow-md); }
 
   .skill-group { margin-bottom: 28px; }
   .skill-group-label {

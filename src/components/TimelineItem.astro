@@ -13,7 +13,14 @@ const { item, delay = 0 } = Astro.props;
   <div class="timeline-period">{item.period}</div>
   <div class="timeline-role">{item.role}</div>
   <div class="timeline-company">{item.company}</div>
-  <p class="timeline-desc">{item.description}</p>
+  {item.sections.map((section) => (
+    <div class="timeline-section">
+      {section.heading && <div class="section-heading">{section.heading}</div>}
+      <ul class="timeline-desc">
+        {section.bullets.map((line) => <li>{line}</li>)}
+      </ul>
+    </div>
+  ))}
 </div>
 
 <style>
@@ -53,9 +60,27 @@ const { item, delay = 0 } = Astro.props;
     color: var(--color-secondary);
     margin-bottom: 8px;
   }
+  .timeline-section {
+    margin-top: 8px;
+  }
+  .section-heading {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+  }
   .timeline-desc {
     font-size: 0.9rem;
     color: var(--color-secondary);
     line-height: 1.6;
+    list-style: disc;
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .timeline-desc li {
+    margin-bottom: 4px;
+  }
+  .timeline-desc li::marker {
+    color: var(--color-primary);
   }
 </style>
