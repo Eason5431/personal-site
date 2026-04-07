@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>廣告數據分析報表｜Pilates 教室</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  /* Header */
+  .header { background: #1a1a2e; color: #fff; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+  .header .badge { background: #4f8ef7; color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 12px; margin-left: 10px; }
+  .header .updated { font-size: 12px; color: #8899bb; }
+
+  /* Tabs */
+  .tabs { background: #fff; border-bottom: 1px solid #e0e4ef; padding: 0 32px; display: flex; gap: 0; }
+  .tab { padding: 14px 24px; font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab:hover { color: #4f8ef7; }
+  .tab.active { color: #4f8ef7; border-bottom-color: #4f8ef7; }
+
+  /* Content */
+  .content { display: none; padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
+  .content.active { display: block; }
+
+  /* KPI Cards */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi-card { background: #fff; border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-left: 4px solid #4f8ef7; }
+  .kpi-card.green { border-left-color: #22c55e; }
+  .kpi-card.orange { border-left-color: #f59e0b; }
+  .kpi-card.purple { border-left-color: #a855f7; }
+  .kpi-label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .kpi-value { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+  .kpi-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+  /* Chart Grid */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+  .chart-card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-title { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 16px; }
+  .chart-wrap { position: relative; height: 220px; }
+  .chart-wrap.tall { height: 260px; }
+
+  /* Pivot Table */
+  .table-card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 28px; }
+  .table-title { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #f8fafc; }
+  th { padding: 10px 14px; text-align: left; font-weight: 600; color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e5e7eb; }
+  td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+  .tag.blue { background: #eff6ff; color: #2563eb; }
+  .tag.green { background: #f0fdf4; color: #16a34a; }
+
+
+  /* Weekly Report Tab */
+  .report-header { background: #fff; border-radius: 12px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 20px; }
+  .report-week { font-size: 12px; color: #9ca3af; margin-bottom: 4px; }
+  .report-title { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+  .report-meta { font-size: 12px; color: #6b7280; margin-top: 6px; }
+  .report-section { background: #fff; border-radius: 12px; padding: 22px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .report-section h3 { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6; }
+  .report-section p { font-size: 13px; color: #374151; line-height: 1.8; margin-bottom: 8px; }
+  .highlight { background: #eff6ff; border-left: 3px solid #4f8ef7; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13px; color: #1e40af; }
+  .budget-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  .budget-table th { background: #f8fafc; padding: 8px 12px; text-align: left; font-size: 11px; color: #6b7280; text-transform: uppercase; }
+  .budget-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
+  .up { color: #22c55e; font-weight: 600; }
+  .down { color: #ef4444; font-weight: 600; }
+  .generate-btn { display: flex; align-items: center; gap: 8px; background: #4f8ef7; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+  .generate-btn:hover { background: #3b7de8; }
+  .ai-badge { background: rgba(255,255,255,0.2); font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+
+  /* Section Labels */
+  .section-label { font-size: 13px; font-weight: 700; margin-bottom: 12px; padding: 4px 0; }
+  .section-label-meta { color: #2563eb; }
+  .section-label-ga   { color: #16a34a; }
+
+  /* 5-column KPI row for GA */
+  .kpi-row-5 { grid-template-columns: repeat(5, 1fr); }
+
+  /* GA KPI card accent */
+  .kpi-card.ga-card { border-left-color: #22c55e; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h1>廣告數據分析報表</h1>
+    <span class="badge">Pilates 教室</span>
+  </div>
+  <span class="updated">最後更新：2026/04/06 17:38</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('report')">📊 報表總覽</div>
+  <div class="tab" onclick="switchTab('weekly')">📝 週報</div>
+  <div class="tab" onclick="switchTab('raw')">🗂 原始數據</div>
+</div>
+
+<!-- 報表總覽 -->
+<div class="content active" id="tab-report">
+
+  <!-- Meta 廣告數據 -->
+  <div class="section-label section-label-meta">Meta 廣告數據</div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">累計總花費</div>
+      <div class="kpi-value">NT$37,628</div>
+      <div class="kpi-sub">Meta + Google Ads</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">總觸及人數</div>
+      <div class="kpi-value">793,909</div>
+      <div class="kpi-sub">不重複觸及</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-label">總詢問數</div>
+      <div class="kpi-value">190</div>
+      <div class="kpi-sub">LINE 188 / FB 1 / IG 1</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">體驗報名數</div>
+      <div class="kpi-value">4</div>
+      <div class="kpi-sub">詢問 → 體驗轉化 2.1%</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">各廣告活動花費比較</div>
+      <div class="chart-wrap"><canvas id="chartSpend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">詢問來源渠道佔比</div>
+      <div class="chart-wrap"><canvas id="chartPie"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">每週花費趨勢</div>
+      <div class="chart-wrap"><canvas id="chartLine"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">各活動觸及人數比較</div>
+      <div class="chart-wrap"><canvas id="chartReach"></canvas></div>
+    </div>
+  </div>
+
+  <!-- GA 數據 -->
+  <div class="section-label section-label-ga">GA 數據</div>
+
+  <div class="kpi-row kpi-row-5">
+    <div class="kpi-card ga-card">
+      <div class="kpi-label">GA 點擊</div>
+      <div class="kpi-value">233</div>
+      <div class="kpi-sub">累計點擊數</div>
+    </div>
+    <div class="kpi-card ga-card">
+      <div class="kpi-label">GA 曝光</div>
+      <div class="kpi-value">4,194</div>
+      <div class="kpi-sub">累計曝光數</div>
+    </div>
+    <div class="kpi-card ga-card">
+      <div class="kpi-label">GA CPC</div>
+      <div class="kpi-value">NT$42.10</div>
+      <div class="kpi-sub">平均每次點擊費用</div>
+    </div>
+    <div class="kpi-card ga-card">
+      <div class="kpi-label">GA 費用</div>
+      <div class="kpi-value">NT$9,810</div>
+      <div class="kpi-sub">累計費用</div>
+    </div>
+    <div class="kpi-card ga-card">
+      <div class="kpi-label">GA CTR</div>
+      <div class="kpi-value">5.56%</div>
+      <div class="kpi-sub">GA點擊 ÷ GA曝光</div>
+    </div>
+  </div>
+
+  <div class="chart-card full" style="margin-bottom:28px">
+    <div class="chart-title">各週 GA 點擊 / GA 曝光趨勢</div>
+    <div class="chart-wrap tall"><canvas id="chartGA"></canvas></div>
+  </div>
+
+</div>
+
+<!-- 週報 -->
+<div class="content" id="tab-weekly">
+  <button class="generate-btn">
+    ✨ 用 AI 生成本週週報 <span class="ai-badge">Claude API</span>
+  </button>
+
+  <div class="report-header">
+    <div class="report-week">第 5 週｜2026/03/16 – 03/22</div>
+    <div class="report-title">廣告投放週報</div>
+    <div class="report-meta">本週花費 NT$8,645（Meta NT$2,905 + Google Ads NT$5,740）｜生成時間：2026/03/22 18:00</div>
+  </div>
+
+  <div class="report-section">
+    <h3>📋 本週總結</h3>
+    <p>本週廣告投放延續「教練的一天」品牌認知策略，Meta 花費 NT$2,905，觸及 48,992 人；Google Ads 大幅增加投放，花費 NT$5,740，點擊 116 次。本週 LINE 詢問數達 61 筆，再創歷週新高，顯示品牌認知持續累積轉化效果。</p>
+    <div class="highlight">⚡ 本週亮點：LINE 詢問 61 筆，詢問 → 體驗課轉化率 11.5%，每筆詢問成本約 NT$142</div>
+  </div>
+
+  <div class="report-section">
+    <h3>📱 Meta 廣告表現</h3>
+    <p><strong>花費：</strong>NT$2,905｜<strong>曝光：</strong>204,522｜<strong>觸及：</strong>48,992｜<strong>人均觸及：</strong>4.17</p>
+    <p>觸及轉化率 0.00%，人均觸及頻次達 4.17，高於上週（1.30），顯示同一批受眾重複曝光次數增加。建議評估是否擴大受眾範圍以降低頻次，或搭配互動型廣告提升再行銷效率。</p>
+  </div>
+
+  <div class="report-section">
+    <h3>🔍 Google Ads 表現</h3>
+    <p><strong>花費：</strong>NT$5,740｜<strong>點擊：</strong>116｜<strong>曝光：</strong>2,157｜<strong>CPC：</strong>NT$48.85｜<strong>CTR：</strong>5.38%</p>
+    <p>本週 Google Ads 大幅擴量，點擊數從上週 6 次躍升至 116 次，CTR 5.38% 表現亮眼，顯示關鍵字品質良好。CPC NT$48.85 略高於上週 NT$36.56，為擴量後正常範圍。</p>
+  </div>
+
+  <div class="report-section">
+    <h3>🔄 轉化漏斗分析</h3>
+    <p>本週詢問共 61 筆（LINE 61 / FB 0 / IG 0），體驗報名 7 筆，漏斗轉化率 11.5%，優於上週 10.3%。</p>
+    <div class="highlight">💡 LINE 詢問佔 100%，建議持續優化 LINE 入口，並跟進詢問後未報名的潛在客戶。</div>
+  </div>
+
+  <div class="report-section">
+    <h3>💰 下週預算建議</h3>
+    <table class="budget-table">
+      <thead><tr><th>渠道</th><th>本週花費</th><th>建議下週</th><th>調整方向</th></tr></thead>
+      <tbody>
+        <tr><td>Meta 品牌認知</td><td>NT$2,905</td><td class="up">NT$3,500</td><td>↑ 擴大受眾，降低頻次</td></tr>
+        <tr><td>Meta 互動廣告</td><td>NT$0</td><td class="up">NT$2,000</td><td>↑ 搭配品牌認知，提升再行銷互動</td></tr>
+        <tr><td>Google Ads</td><td>NT$5,740</td><td>NT$5,000</td><td>→ 維持高 CTR，優化 CPC</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 原始數據 -->
+<div class="content" id="tab-raw">
+  <div class="table-card">
+    <div class="table-title">原始數據表（含計算欄位）</div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th>廣告活動</th>
+          <th>廣告類型</th>
+          <th>Meta 花費</th>
+          <th>Meta 曝光</th>
+          <th>Meta 觸及人數</th>
+          <th>Meta 總訊息聯繫對象人數</th>
+          <th>Meta 人均觸及（曝光÷觸及）</th>
+          <th>Meta 觸及轉化率（訊息聯繫÷觸及）</th>
+          <th>GA 點擊</th>
+          <th>GA 曝光</th>
+          <th>GA CPC</th>
+          <th>GA 費用</th>
+          <th>GA CTR（點擊÷曝光）</th>
+          <th>LINE 詢問</th>
+          <th>FB 詢問</th>
+          <th>IG 詢問</th>
+          <th>LINE 體驗</th>
+          <th>FB 體驗</th>
+          <th>IG 體驗</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0112–0118</td><td>理想的皮拉提斯教室</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$2,998</td><td>139,062</td><td>134,719</td><td>0</td>
+          <td style="background:#fffbeb">1.03</td><td style="background:#fffbeb">0.00%</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td style="background:#f0fdf4">—</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>0128–0208</td><td>騎馬</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$5,997</td><td>276,659</td><td>206,343</td><td>2</td>
+          <td style="background:#fffbeb">1.34</td><td style="background:#fffbeb">0.00%</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td style="background:#f0fdf4">—</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>0211–0228</td><td>教練的一天</td><td><span class="tag green">互動</span></td>
+          <td>NT$6,886</td><td>43,276</td><td>15,296</td><td>20</td>
+          <td style="background:#fffbeb">2.83</td><td style="background:#fffbeb">0.13%</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td style="background:#f0fdf4">—</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>0309–0315</td><td>教練的一天</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$3,090</td><td>126,436</td><td>97,007</td><td>1</td>
+          <td style="background:#fffbeb">1.30</td><td style="background:#fffbeb">0.00%</td>
+          <td>6</td><td>211</td><td>NT$36.56</td><td>NT$219</td><td style="background:#f0fdf4">2.84%</td>
+          <td>38</td><td>—</td><td>1</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>0316–0322</td><td>教練的一天</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$2,905</td><td>204,522</td><td>48,992</td><td>0</td>
+          <td style="background:#fffbeb">4.17</td><td style="background:#fffbeb">0.00%</td>
+          <td>116</td><td>2,157</td><td>NT$48.85</td><td>NT$5,740</td><td style="background:#f0fdf4">5.38%</td>
+          <td>61</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>0323–0329</td><td>細心照顧的教練</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$2,769</td><td>129,789</td><td>129,658</td><td>0</td>
+          <td style="background:#fffbeb">1.00</td><td style="background:#fffbeb">0.00%</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td style="background:#f0fdf4">—</td>
+          <td>55</td><td>—</td><td>—</td><td>3</td><td>—</td><td>1</td>
+        </tr>
+        <tr>
+          <td>0330–0405</td><td>細心照顧的教練</td><td><span class="tag blue">品牌認知</span></td>
+          <td>NT$3,173</td><td>162,105</td><td>161,894</td><td>0</td>
+          <td style="background:#fffbeb">1.00</td><td style="background:#fffbeb">0.00%</td>
+          <td>111</td><td>1,826</td><td>NT$34.69</td><td>NT$3,851</td><td style="background:#f0fdf4">6.08%</td>
+          <td>34</td><td>1</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#9ca3af">
+      🟡 黃色欄位 = Meta 計算指標（人均觸及 = 曝光÷觸及，觸及轉化率 = 訊息聯繫÷觸及）｜🟢 綠色欄位 = Google Ads 計算指標（CTR = 點擊÷曝光）
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  const tabs = ['report','weekly','raw'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+const shortLabels = ['理想的皮拉提斯教', '騎馬', '教練的一天', '教練的一天', '教練的一天', '細心照顧的教練', '細心照顧的教練'];
+
+// 花費長條圖
+new Chart(document.getElementById('chartSpend'), {
+  type: 'bar',
+  data: {
+    labels: shortLabels,
+    datasets: [{
+      label: 'Meta 花費（NT$）',
+      data: [2998, 5997, 6886, 3090, 2905, 2769, 3173],
+      backgroundColor: ['#4f8ef7cc','#4f8ef7cc','#22c55ecc','#4f8ef7cc','#4f8ef7cc'],
+      borderRadius: 6,
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'NT$'+v.toLocaleString() } } } }
+});
+
+// 圓餅圖
+new Chart(document.getElementById('chartPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['LINE 詢問 (188)', 'FB 詢問 (1)', 'IG 詢問 (1)'],
+    datasets: [{ data: [188, 1, 1], backgroundColor: ['#4f8ef7', '#a855f7'], borderWidth: 0 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+});
+
+// 折線圖（週花費趨勢）
+new Chart(document.getElementById('chartLine'), {
+  type: 'line',
+  data: {
+    labels: shortLabels,
+    datasets: [
+      { label: 'Meta 花費', data: [2998, 5997, 6886, 3090, 2905, 2769, 3173], borderColor: '#4f8ef7', backgroundColor: '#4f8ef720', tension: 0.3, fill: true, pointRadius: 5 },
+      { label: '觸及人數（百）', data: [1347, 2063, 153, 970, 490, 1297, 1619], borderColor: '#22c55e', backgroundColor: 'transparent', tension: 0.3, pointRadius: 5 }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 11 } } } }, scales: { y: { beginAtZero: true } } }
+});
+
+// 觸及長條圖
+new Chart(document.getElementById('chartReach'), {
+  type: 'bar',
+  data: {
+    labels: shortLabels,
+    datasets: [{
+      label: '觸及人數',
+      data: [134719, 206343, 15296, 97007, 48992, 129658, 161894],
+      backgroundColor: '#22c55ecc',
+      borderRadius: 6,
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => (v/1000).toFixed(0)+'K' } } } }
+});
+
+// GA 長條圖
+new Chart(document.getElementById('chartGA'), {
+  type: 'bar',
+  data: {
+    labels: shortLabels,
+    datasets: [
+      {
+        label: 'GA 點擊',
+        data: [0, 0, 0, 6, 116, 0, 111],
+        backgroundColor: '#22c55ecc',
+        borderRadius: 6,
+      },
+      {
+        label: 'GA 曝光（÷100）',
+        data: [0, 0, 0, 211, 2157, 0, 1826].map(v => Math.round(v / 100)),
+        backgroundColor: '#86efaccc',
+        borderRadius: 6,
+      }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 11 } } } }, scales: { y: { beginAtZero: true } } }
+});
+</script>
+</body>
+</html>

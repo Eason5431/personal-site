@@ -30,8 +30,7 @@ const { name, description, tags, githubUrl, demoUrl, emoji, bgGradient, category
       {demoUrl && (
         <a
           href={demoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(demoUrl.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           class="project-link link-demo"
           aria-label={`${name} 線上 Demo`}
         >
