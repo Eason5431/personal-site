@@ -1,0 +1,9 @@
+flowchart LR
+  GA[Google Ads] --> GS["Google Sheets / CSV Export"]
+  META[Meta Ads] --> GS
+  GS --> PY["fetch_and_update.py / 計算 KPI"]
+  PY --> PROTO[prototype.html]
+  PROTO --> CHART[圖表視覺化]
+  PROTO --> AI[Claude API]
+  AI --> REPORT[AI 週報摘要]
+  PROTO --> SHARE[外部分享連結]

@@ -34,6 +34,162 @@ const {
     </main>
     <Footer />
 
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <span class="modal-emoji" id="modal-emoji"></span>
+          <div class="modal-title-wrap">
+            <div class="modal-title" id="modal-title"></div>
+            <div class="modal-category" id="modal-category"></div>
+          </div>
+          <button class="modal-close" id="modal-close" aria-label="關閉">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-section-label">專案說明</div>
+          <p class="modal-desc" id="modal-desc"></p>
+          <ul class="modal-tags" id="modal-tags" style="list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"></ul>
+          <div class="modal-section-label" style="margin-top:24px;">技術架構</div>
+          <div class="modal-flowchart-wrap">
+            <img id="modal-flowchart-img" src="" alt="技術架構圖" style="width:auto;height:auto;display:block;margin:0 auto;" />
+          </div>
+        </div>
+        <div class="modal-footer" id="modal-footer"></div>
+      </div>
+    </div>
+
+    <style is:global>
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(9,9,11,0.55);
+        backdrop-filter: blur(4px);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .modal-overlay[hidden] { display: none; }
+      .modal-panel {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 720px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modal-in 280ms ease-out both;
+      }
+      @keyframes modal-in {
+        from { opacity: 0; transform: translateY(16px) scale(.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 24px 28px 20px;
+        border-bottom: 1px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        background: var(--color-surface);
+        z-index: 1;
+      }
+      .modal-emoji { font-size: 1.8rem; line-height: 1; }
+      .modal-title-wrap { flex: 1; }
+      .modal-title {
+        font-family: var(--font-heading);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+      .modal-category {
+        font-size: .75rem;
+        font-weight: 600;
+        color: var(--color-accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-top: 2px;
+      }
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        background: var(--color-muted);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-secondary);
+        transition: background 150ms ease-out, color 150ms ease-out;
+      }
+      .modal-close:hover { background: var(--color-accent-light); color: var(--color-accent); }
+      .modal-body { padding: 28px; }
+      .modal-section-label {
+        font-family: var(--font-heading);
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        margin-bottom: 10px;
+      }
+      .modal-desc {
+        font-size: .9rem;
+        color: var(--color-secondary);
+        line-height: 1.75;
+      }
+      .modal-tag {
+        font-size: .72rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: var(--radius-full);
+        background: var(--color-accent-light);
+        color: var(--color-accent);
+        border: 1px solid rgba(37,99,235,.2);
+      }
+      .modal-flowchart-wrap {
+        background: #f8faff;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        overflow-x: auto;
+        margin-top: 8px;
+      }
+      .modal-footer {
+        padding: 0 28px 28px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .modal-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 150ms ease-out;
+        border: none;
+        cursor: pointer;
+      }
+      .modal-btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
+      .modal-btn-primary:hover { background: var(--color-accent); }
+      .modal-btn-outline { background: transparent; color: var(--color-primary); border: 1.5px solid var(--color-border); }
+      .modal-btn-outline:hover { border-color: var(--color-accent); color: var(--color-accent); }
+      @media (max-width: 480px) {
+        .modal-panel { max-height: 95vh; }
+        .modal-header, .modal-body, .modal-footer { padding-left: 18px; padding-right: 18px; }
+      }
+    </style>
+
     <script>
       // Intersection Observer for .fade-up animations
       const observer = new IntersectionObserver(
@@ -49,6 +205,65 @@ const {
       );
 
       document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+      // Project Modal
+      const modal     = document.getElementById('project-modal') as HTMLElement;
+      const modalClose = document.getElementById('modal-close') as HTMLButtonElement;
+
+      function openModal(btn: HTMLElement) {
+        const d = btn.dataset;
+        (document.getElementById('modal-emoji') as HTMLElement).textContent    = d.emoji ?? '';
+        (document.getElementById('modal-title') as HTMLElement).textContent    = d.name ?? '';
+        (document.getElementById('modal-category') as HTMLElement).textContent = d.category ?? '';
+        (document.getElementById('modal-desc') as HTMLElement).textContent     = d.description ?? '';
+
+        const tagsEl = document.getElementById('modal-tags') as HTMLElement;
+        tagsEl.innerHTML = '';
+        JSON.parse(d.tags ?? '[]').forEach((tag: string) => {
+          const li = document.createElement('li');
+          li.className = 'modal-tag';
+          li.textContent = tag;
+          tagsEl.appendChild(li);
+        });
+
+        const img = document.getElementById('modal-flowchart-img') as HTMLImageElement;
+        img.src = d.flowchartSvg ?? '';
+        img.alt = `${d.name} 技術架構圖`;
+
+        const footer = document.getElementById('modal-footer') as HTMLElement;
+        footer.innerHTML = '';
+        if (d.demo) {
+          const a = document.createElement('a');
+          a.href = d.demo; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.className = 'modal-btn modal-btn-primary';
+          a.textContent = '查看 Demo';
+          footer.appendChild(a);
+        }
+        if (d.github) {
+          const a = document.createElement('a');
+          a.href = d.github; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.className = 'modal-btn modal-btn-outline';
+          a.textContent = 'GitHub';
+          footer.appendChild(a);
+        }
+
+        modal.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest('.js-open-modal') as HTMLElement | null;
+        if (btn) openModal(btn);
+      });
+
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     </script>
   </body>
 </html>

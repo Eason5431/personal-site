@@ -10,6 +10,7 @@ export interface Project {
   emoji?: string;
   bgGradient?: string;
   featured: boolean;
+  flowchartSvg?: string;   // 預生成 SVG 路徑（/flowcharts/xxx.svg），有值時「詳細介紹」改為 Modal
 }
 
 export const projects: Project[] = [
@@ -22,6 +23,7 @@ export const projects: Project[] = [
     category: 'AI 開發工具',
     githubUrl: 'https://github.com/eason/claude-workflow',
     emoji: '🧠',
+    flowchartSvg: '/flowcharts/claude-workflow.svg',
     bgGradient: 'linear-gradient(135deg, #ede9fe, #dbeafe)',
     featured: true,
   },
@@ -35,6 +37,7 @@ export const projects: Project[] = [
     category: 'LINE 聊天機器人',
     githubUrl: 'https://github.com/eason/faq-bot-mvp',
     emoji: '🤖',
+    flowchartSvg: '/flowcharts/faq-bot-mvp.svg',
     bgGradient: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
     featured: false,
   },
@@ -46,6 +49,7 @@ export const projects: Project[] = [
     category: 'LINE 聊天機器人',
     githubUrl: 'https://github.com/eason/news-bot',
     emoji: '📰',
+    flowchartSvg: '/flowcharts/news-bot.svg',
     bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
     featured: false,
   },
@@ -62,6 +66,7 @@ export const projects: Project[] = [
     emoji: '📊',
     bgGradient: 'linear-gradient(135deg, #dbeafe, #ede9fe)',
     featured: true,
+    flowchartSvg: '/flowcharts/ad-analytics.svg',
   },
 
   // ── 內容 / 媒體自動化 ──
@@ -73,6 +78,7 @@ export const projects: Project[] = [
     category: '內容 / 媒體自動化',
     githubUrl: 'https://github.com/eason/video-auto',
     emoji: '🎬',
+    flowchartSvg: '/flowcharts/video-auto.svg',
     bgGradient: 'linear-gradient(135deg, #f3e8ff, #e9d5ff)',
     featured: false,
   },
@@ -84,6 +90,7 @@ export const projects: Project[] = [
     category: '內容 / 媒體自動化',
     githubUrl: 'https://github.com/eason/ppt-maker',
     emoji: '🖥️',
+    flowchartSvg: '/flowcharts/ppt-maker.svg',
     bgGradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)',
     featured: false,
   },
@@ -96,6 +103,7 @@ export const projects: Project[] = [
     githubUrl: 'https://github.com/eason/blockchain-layman',
     demoUrl: 'https://blockchain-layman.vercel.app',
     emoji: '🌐',
+    flowchartSvg: '/flowcharts/blockchain-layman.svg',
     bgGradient: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
     featured: true,
   },

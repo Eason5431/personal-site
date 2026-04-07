@@ -1,0 +1,8 @@
+flowchart LR
+  A[用戶 LINE 訊息] --> B[LINE Webhook]
+  B --> C[問題向量化]
+  C --> D[知識庫相似度搜尋]
+  D --> E{相似度判斷}
+  E -- 高 --> F[AI 生成回答]
+  E -- 低 --> G[轉人工客服]
+  F --> H[LINE 回覆用戶]

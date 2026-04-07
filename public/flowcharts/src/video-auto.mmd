@@ -1,0 +1,7 @@
+flowchart LR
+  A[輸入文字腳本] --> B["TTS 配音生成 (ElevenLabs)"]
+  A --> C["AI 圖片生成 (Banana Nano)"]
+  B --> D["影片合成 (Veo 3.1)"]
+  C --> D
+  D --> E[字幕嵌入]
+  E --> F[輸出短影片]
