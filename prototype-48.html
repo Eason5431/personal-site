@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prototype #48 — 首頁文案改造</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --color-primary:      #18181B;
+    --color-on-primary:   #FFFFFF;
+    --color-secondary:    #3F3F46;
+    --color-accent:       #2563EB;
+    --color-accent-light: #DBEAFE;
+    --color-background:   #FAFAFA;
+    --color-foreground:   #09090B;
+    --color-muted:        #E8ECF0;
+    --color-border:       #E4E4E7;
+    --color-surface:      #FFFFFF;
+    --font-heading: 'Poppins', sans-serif;
+    --font-body:    'Open Sans', sans-serif;
+    --radius-sm:  6px;
+    --radius-md:  12px;
+    --radius-lg:  20px;
+    --radius-full: 999px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+    --transition-base: 280ms ease-out;
+    --navbar-height: 60px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+
+  /* ── Prototype Banner ── */
+  .proto-banner {
+    background: #FEF3C7;
+    border-bottom: 1px solid #FCD34D;
+    text-align: center;
+    padding: 10px 24px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: #92400E;
+    font-weight: 600;
+  }
+  .proto-banner span { color: #D97706; }
+
+  /* ── Navbar (mock) ── */
+  .navbar {
+    height: var(--navbar-height);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    justify-content: space-between;
+  }
+  .nav-brand { font-family: var(--font-heading); font-weight: 700; color: var(--color-primary); }
+  .nav-links { display: flex; gap: 28px; font-size: 0.9rem; color: var(--color-secondary); }
+  .nav-links a:hover { color: var(--color-accent); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: calc(100vh - var(--navbar-height) - 48px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  .hero-greeting {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: var(--color-accent-light);
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+  .hero-name {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+  }
+  .hero-name-sub {
+    display: block;
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    font-weight: 500;
+    color: var(--color-secondary);
+    margin-top: 8px;
+    letter-spacing: 0.01em;
+  }
+  .hero-role {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-secondary);
+    margin-bottom: 20px;
+  }
+  .hero-desc {
+    font-size: 0.97rem;
+    color: var(--color-secondary);
+    line-height: 1.75;
+    max-width: 440px;
+    margin-bottom: 36px;
+  }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary { background: var(--color-primary); color: var(--color-on-primary); box-shadow: var(--shadow-sm); }
+  .btn-primary:hover { background: var(--color-accent); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .btn-outline { background: transparent; color: var(--color-primary); border: 2px solid var(--color-border); }
+  .btn-outline:hover { border-color: var(--color-accent); color: var(--color-accent); transform: translateY(-2px); }
+
+  .hero-avatar-wrap { display: flex; justify-content: center; }
+  .hero-avatar {
+    width: 300px;
+    height: 300px;
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+    background: linear-gradient(135deg, var(--color-accent-light), var(--color-muted));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+    animation: morph 8s ease-in-out infinite;
+  }
+  @keyframes morph {
+    0%,100% { border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
+    25%      { border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%; }
+    50%      { border-radius: 50% 50% 60% 40% / 50% 40% 60% 50%; }
+    75%      { border-radius: 40% 60% 50% 50% / 60% 50% 50% 40%; }
+  }
+
+  /* ── Highlights ── */
+  .highlights-section { padding: 0 0 80px; }
+  .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .highlight-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+  .highlight-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .highlight-icon {
+    width: 44px; height: 44px;
+    background: var(--color-accent-light);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    color: var(--color-accent);
+  }
+  .highlight-label {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 6px;
+  }
+  .highlight-desc { font-size: 0.88rem; color: var(--color-secondary); line-height: 1.6; }
+
+  /* ── Diff Highlight ── */
+  .changed {
+    position: relative;
+    outline: 2px dashed #F59E0B;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .changed::after {
+    content: '✏️ 已改';
+    position: absolute;
+    top: -22px;
+    left: 0;
+    font-size: 0.7rem;
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; text-align: center; gap: 40px; padding: 48px 24px 64px; }
+    .hero-avatar-wrap { order: -1; }
+    .hero-avatar { width: 200px; height: 200px; font-size: 3.5rem; }
+    .hero-desc { margin-left: auto; margin-right: auto; }
+    .hero-ctas { justify-content: center; }
+    .highlights-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  🧪 Prototype #48 — 首頁文案改造｜<span>橘色虛線框 = 本次改動區塊</span>｜其餘區塊維持不動
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-brand">Eason</div>
+  <div class="nav-links">
+    <a href="#">履歷</a>
+    <a href="#">專案</a>
+    <a href="#">聯絡</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-text">
+    <span class="hero-greeting">Hi, I'm Eason</span>
+
+    <!-- ✏️ 改動 1：大標題 -->
+    <h1 class="hero-name changed">
+      資深產品經理
+      <span class="hero-name-sub">用戶增長 · AI 流程自動化</span>
+    </h1>
+
+    <!-- ✏️ 改動 2：角色標籤 -->
+    <p class="hero-role changed">Product Manager &amp; AI Builder</p>
+
+    <p class="hero-desc changed">
+      具 5 年 FinTech 產品實戰背景，擅長用數據驅動增長決策、以 AI 工具加速產品交付。開放求職機會與接案合作。
+    </p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+        </svg>
+        查看履歷
+      </a>
+      <a href="#" class="btn btn-outline">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        洽談合作
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-avatar-wrap">
+    <div class="hero-avatar" aria-label="Eason 的頭像">E</div>
+  </div>
+</section>
+
+<!-- Tech Highlights -->
+<section class="highlights-section">
+  <div class="container">
+    <div class="highlights-grid">
+
+      <!-- ✏️ 改動 3：亮點卡 1 -->
+      <div class="highlight-card changed">
+        <div class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div class="highlight-label">資深產業實務經驗</div>
+        <div class="highlight-desc">具 5 年以上產品與專案管理經驗，深耕 FinTech 與加密貨幣交易所領域</div>
+      </div>
+
+      <!-- ✏️ 改動 4：亮點卡 2 -->
+      <div class="highlight-card changed" style="transition-delay:0.1s">
+        <div class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4l3 3"/>
+          </svg>
+        </div>
+        <div class="highlight-label">AI 落地與流程自動化</div>
+        <div class="highlight-desc">專精於運用 Claude Code 打造 AI 原生開發工作流，成功提升產品交付效率 40%</div>
+      </div>
+
+      <!-- ✏️ 改動 5：亮點卡 3 -->
+      <div class="highlight-card changed" style="transition-delay:0.2s">
+        <div class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <div class="highlight-label">數據驅動與用戶增長</div>
+        <div class="highlight-desc">曾主導多項增長專案，達成註冊轉化率提升 20% 與 MAU 增長 150% 之實績</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

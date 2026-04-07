@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prototype #50 — Footer & 首頁頭像</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary:      #18181B;
+      --color-on-primary:   #FFFFFF;
+      --color-secondary:    #3F3F46;
+      --color-accent:       #2563EB;
+      --color-accent-light: #DBEAFE;
+      --color-background:   #FAFAFA;
+      --color-foreground:   #09090B;
+      --color-border:       #E4E4E7;
+      --color-surface:      #FFFFFF;
+      --font-heading: 'Poppins', sans-serif;
+      --font-body:    'Open Sans', sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-full: 999px;
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+      --transition-fast: 150ms ease-out;
+      --transition-base: 280ms ease-out;
+      --navbar-height: 60px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font-body);
+      line-height: 1.6;
+      color: var(--color-foreground);
+      background: var(--color-background);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ── PROTOTYPE BANNER ── */
+    .proto-banner {
+      background: #FFF3CD;
+      border-bottom: 2px solid #FFC107;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-family: var(--font-body);
+      color: #856404;
+    }
+    .proto-banner strong { font-weight: 700; }
+
+    /* ── NAVBAR (mock) ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      height: var(--navbar-height);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+    .nav-logo { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; }
+    .nav-links { display: flex; gap: 24px; font-size: 0.9rem; color: var(--color-secondary); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: calc(100vh - var(--navbar-height) - 42px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 64px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+    .hero-greeting {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero-name {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--color-foreground);
+      margin-bottom: 8px;
+    }
+    .hero-name-sub {
+      display: block;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      font-weight: 500;
+      color: var(--color-accent);
+    }
+    .hero-role {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      line-height: 1.75;
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--color-accent); color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-outline { border: 1.5px solid var(--color-border); color: var(--color-foreground); }
+    .btn-outline:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    /* ── HERO AVATAR ── */
+    .hero-avatar-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* [CHANGE A] 新增頭像圖片（完整顯示，無裁切，無邊框） */
+    .hero-avatar-img {
+      width: clamp(220px, 35vw, 380px);
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12));
+      transition: transform var(--transition-base);
+    }
+    .hero-avatar-img:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    /* ── FOOTER ── */
+    footer.site-footer {
+      background: var(--color-primary);
+      color: rgba(255,255,255,0.5);
+      padding: 28px 24px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+    .footer-copy span { color: white; font-weight: 600; }
+
+    /* [CHANGE B] Footer 右下角社群 icon 區塊 */
+    .footer-socials {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+      cursor: pointer;
+      border: none;
+    }
+    .footer-social-btn:hover {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .footer-social-btn svg { display: block; }
+
+    /* ── QR MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      padding: 32px 28px;
+      max-width: 300px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 1.4rem;
+      color: var(--color-secondary);
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--color-foreground); }
+    .modal-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: var(--color-foreground);
+    }
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: var(--color-secondary);
+      margin-bottom: 20px;
+    }
+    .modal-qr-placeholder {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 16px;
+      background: #f3f4f6;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      color: var(--color-secondary);
+      border: 1px dashed var(--color-border);
+    }
+
+    /* ── ANNOTATION LABELS ── */
+    .anno {
+      display: inline-block;
+      background: #2563EB;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 2px 7px;
+      margin-left: 8px;
+      vertical-align: middle;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 700px) {
+      .hero { grid-template-columns: 1fr; text-align: center; gap: 32px; padding: 48px 16px; }
+      .hero-avatar-wrap { order: -1; }
+      .hero-ctas { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PROTOTYPE BANNER -->
+<div class="proto-banner">
+  <strong>原型 #50</strong> — 優化 footers &amp; 首頁頭像 ·
+  <span style="color:#0d6efd">藍色標籤</span> 為本次異動點
+</div>
+
+<!-- NAVBAR (mock) -->
+<nav class="navbar">
+  <div class="nav-logo">Eason</div>
+  <div class="nav-links">
+    <span>首頁</span><span>作品集</span><span>履歷</span><span>聯絡</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- 左側文字 -->
+  <div class="hero-text">
+    <span class="hero-greeting">Hi, I'm Eason</span>
+    <h1 class="hero-name">
+      資深產品經理
+      <span class="hero-name-sub">用戶增長 · AI 流程自動化</span>
+    </h1>
+    <p class="hero-role">Product Manager &amp; AI Builder</p>
+    <p class="hero-desc">
+      具 5 年 FinTech 產品實戰背景，擅長用數據驅動增長決策、以 AI 工具加速產品交付。開放求職機會與接案合作。
+    </p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        查看履歷
+      </a>
+      <a href="#" class="btn btn-outline">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        洽談合作
+      </a>
+    </div>
+  </div>
+
+  <!-- 右側頭像 [CHANGE A] -->
+  <div class="hero-avatar-wrap">
+    <span class="anno">CHANGE A：新增插圖頭像</span><br><br>
+    <img
+      class="hero-avatar-img"
+      src="file:///Users/saniyang/.claude/image-cache/246384d2-191b-4164-b5ed-e1bdcd56f3a3/6.jpeg"
+      alt="Eason 的 Q 版頭像"
+      onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';"
+    />
+    <!-- Fallback if image path doesn't load -->
+    <div id="avatar-fallback" style="display:none; width:280px; height:320px; background:#f3f4f6; border-radius:16px; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:#6b7280; font-size:0.9rem; border:2px dashed #d1d5db;">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#9ca3af" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      avatar.png 放置位置<br>
+      <small>public/avatar.png</small>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER [CHANGE B] -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 <span>Eason</span> · Built with ☕ and Claude Code</p>
+
+    <!-- 右下角社群 icon -->
+    <div class="footer-socials">
+      <span class="anno" style="background:rgba(255,255,255,0.15); color:#fff;">CHANGE B：社群 icon</span>
+
+      <!-- LinkedIn -->
+      <a href="https://linkedin.com/in/eason" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="LinkedIn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+
+      <!-- LINE（點擊開 QR modal） -->
+      <button class="footer-social-btn" aria-label="LINE" onclick="document.getElementById('line-modal').classList.add('open')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+        </svg>
+      </button>
+
+      <!-- WhatsApp -->
+      <a href="https://wa.me/886XXXXXXXXX" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="WhatsApp">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<!-- LINE QR MODAL -->
+<div class="modal-overlay" id="line-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('line-modal').classList.remove('open')">×</button>
+    <div class="modal-title">加我 LINE</div>
+    <div class="modal-subtitle">掃描 QR Code 或搜尋 LINE ID</div>
+    <div class="modal-qr-placeholder">
+      <!-- 實作時替換為實際 QR 圖片 -->
+      <span>QR Code<br>public/qr/line-qr.png</span>
+    </div>
+    <div style="font-size:0.82rem; color:#6b7280;">LINE ID：@eason</div>
+  </div>
+</div>
+
+</body>
+</html>
