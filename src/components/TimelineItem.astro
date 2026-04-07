@@ -1,0 +1,61 @@
+---
+import type { WorkExperience } from '../data/resume';
+
+interface Props {
+  item: WorkExperience;
+  delay?: number;
+}
+
+const { item, delay = 0 } = Astro.props;
+---
+
+<div class="timeline-item fade-up" style={`transition-delay: ${delay}s`}>
+  <div class="timeline-period">{item.period}</div>
+  <div class="timeline-role">{item.role}</div>
+  <div class="timeline-company">{item.company}</div>
+  <p class="timeline-desc">{item.description}</p>
+</div>
+
+<style>
+  .timeline-item {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 36px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 2px solid var(--color-background);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+  .timeline-period {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .timeline-role {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 2px;
+  }
+  .timeline-company {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+  }
+  .timeline-desc {
+    font-size: 0.9rem;
+    color: var(--color-secondary);
+    line-height: 1.6;
+  }
+</style>

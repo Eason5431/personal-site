@@ -1,0 +1,139 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+  delay?: number; // stagger delay in seconds
+}
+
+const { project, delay = 0 } = Astro.props;
+const { name, description, tags, githubUrl, demoUrl, emoji, bgGradient } = project;
+---
+
+<article
+  class="project-card fade-up"
+  style={`transition-delay: ${delay}s`}
+>
+  <div
+    class="project-thumbnail"
+    style={bgGradient ? `background: ${bgGradient}` : ''}
+  >
+    {emoji && <span aria-hidden="true">{emoji}</span>}
+  </div>
+  <div class="project-body">
+    <h3 class="project-name">{name}</h3>
+    <p class="project-desc">{description}</p>
+    <ul class="project-tags" aria-label="技術棧">
+      {tags.map((tag) => <li class="tag">{tag}</li>)}
+    </ul>
+    <div class="project-links">
+      {githubUrl && (
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+          aria-label={`${name} GitHub 原始碼`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.44 5.44 0 0 0 14.5 2.5c-1.4 0-2.7.5-3.6 1.4"/>
+          </svg>
+          GitHub
+        </a>
+      )}
+      {demoUrl && (
+        <a
+          href={demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+          aria-label={`${name} 線上 Demo`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15,3 21,3 21,9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Demo
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+  .project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .project-thumbnail {
+    height: 180px;
+    background: linear-gradient(135deg, var(--color-muted), var(--color-accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+  .project-body {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .project-name {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+  }
+  .project-desc {
+    font-size: 0.9rem;
+    color: var(--color-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    flex: 1;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+    list-style: none;
+  }
+  .tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-muted);
+    color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+  }
+  .project-links { display: flex; gap: 10px; }
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    padding: 6px 14px;
+    border: 1.5px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .project-link:hover {
+    background: var(--color-accent);
+    color: white;
+  }
+</style>

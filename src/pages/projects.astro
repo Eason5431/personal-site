@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
+
+// featured 專案排前面
+const sorted = [...projects].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+---
+
+<BaseLayout
+  title="作品集 — Eason"
+  description="精選 Side Projects，涵蓋 AI 工具、數據分析與網站開發。"
+>
+  <div class="container section">
+    <h1 class="section-title fade-up">作品集</h1>
+    <p class="section-subtitle fade-up">精選 Side Projects，涵蓋 AI 工具、數據分析與網站開發</p>
+
+    <div class="projects-grid">
+      {sorted.map((project, i) => (
+        <ProjectCard project={project} delay={i * 0.08} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+  }
+  @media (max-width: 480px) {
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>

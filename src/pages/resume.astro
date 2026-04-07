@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TimelineItem from '../components/TimelineItem.astro';
+import SkillChip from '../components/SkillChip.astro';
+import { resume } from '../data/resume';
+---
+
+<BaseLayout
+  title="履歷 — Eason"
+  description="工作經歷、技能清單與學歷。"
+>
+  <div class="container section">
+    <h1 class="section-title fade-up">履歷</h1>
+    <p class="section-subtitle fade-up">工作經歷、技能與學歷</p>
+
+    <div class="resume-layout">
+      <!-- LEFT: Experience + Education + Download -->
+      <div class="resume-main">
+        <h2 class="resume-section-title fade-up">工作經歷</h2>
+        <div class="timeline">
+          {resume.experiences.map((item, i) => (
+            <TimelineItem item={item} delay={i * 0.1} />
+          ))}
+        </div>
+
+        <h2 class="resume-section-title fade-up" style="margin-top:48px">學歷</h2>
+        {resume.education.map((edu) => (
+          <div class="edu-item fade-up">
+            <div class="edu-degree">{edu.degree}</div>
+            <div class="edu-school">{edu.school}</div>
+            <div class="edu-year">{edu.year}</div>
+          </div>
+        ))}
+
+        <div class="download-area fade-up">
+          <p>需要完整版 PDF 履歷？</p>
+          <a href="/resume.pdf" download class="btn-download">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            下載 PDF 履歷
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: Skills -->
+      <div class="resume-aside">
+        <h2 class="resume-section-title fade-up">技能</h2>
+        {resume.skillGroups.map((group, i) => (
+          <div class="skill-group fade-up" style={`transition-delay:${i * 0.1}s`}>
+            <div class="skill-group-label">{group.label}</div>
+            <div class="skill-chips">
+              {group.primary.map((s) => <SkillChip label={s} variant="primary" />)}
+              {group.secondary.map((s) => <SkillChip label={s} variant="secondary" />)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .resume-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .resume-section-title {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .resume-section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--color-muted);
+    border-radius: 2px;
+  }
+  .timeline {
+    position: relative;
+    padding-left: 12px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+    border-radius: 2px;
+  }
+  .edu-item { margin-bottom: 20px; }
+  .edu-degree {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 2px;
+  }
+  .edu-school { font-size: 0.9rem; color: var(--color-secondary); }
+  .edu-year { font-size: 0.8rem; color: var(--color-accent); font-weight: 600; margin-top: 2px; }
+
+  .download-area {
+    margin-top: 48px;
+    padding: 28px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    border-radius: var(--radius-lg);
+    text-align: center;
+    color: white;
+  }
+  .download-area p { font-size: 0.95rem; opacity: 0.75; margin-bottom: 16px; }
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: var(--color-primary);
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .btn-download:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+  .skill-group { margin-bottom: 28px; }
+  .skill-group-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  @media (max-width: 768px) {
+    .resume-layout { grid-template-columns: 1fr; gap: 40px; }
+  }
+</style>
