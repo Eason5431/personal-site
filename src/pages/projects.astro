@@ -3,32 +3,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { projects } from '../data/projects';
 
-// featured 專案排前面
-const sorted = [...projects].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+const CATEGORY_ORDER = [
+  'AI 開發工具',
+  'LINE 聊天機器人',
+  '數據分析',
+  '內容 / 媒體自動化',
+];
+
+const grouped = CATEGORY_ORDER
+  .map(cat => ({ cat, items: projects.filter(p => p.category === cat) }))
+  .filter(g => g.items.length > 0);
 ---
 
 <BaseLayout
   title="作品集 — Eason"
-  description="精選 Side Projects，涵蓋 AI 工具、數據分析與網站開發。"
+  description="精選 Side Projects，涵蓋 AI 工具、數據分析與自動化開發。"
 >
   <div class="container section">
     <h1 class="section-title fade-up">作品集</h1>
-    <p class="section-subtitle fade-up">精選 Side Projects，涵蓋 AI 工具、數據分析與網站開發</p>
+    <p class="section-subtitle fade-up" style="transition-delay:.08s">精選 Side Projects，涵蓋 AI 工具、數據分析與自動化開發</p>
 
-    <div class="projects-grid">
-      {sorted.map((project, i) => (
-        <ProjectCard project={project} delay={i * 0.08} />
-      ))}
-    </div>
+    {grouped.map(({ cat, items }) => (
+      <section class="category-block fade-up">
+        <div class="category-header">
+          <h2 class="category-title">{cat}</h2>
+          <div class="category-rule" aria-hidden="true" />
+        </div>
+        <div class="projects-grid">
+          {items.map((project, i) => (
+            <ProjectCard project={project} delay={i * 0.08} />
+          ))}
+        </div>
+      </section>
+    ))}
   </div>
 </BaseLayout>
 
 <style>
+  .category-block {
+    margin-bottom: 56px;
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .category-title {
+    font-family: var(--font-heading);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .category-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
   }
+
   @media (max-width: 480px) {
     .projects-grid { grid-template-columns: 1fr; }
   }
